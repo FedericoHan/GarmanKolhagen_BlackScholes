@@ -9,16 +9,20 @@ The FX market refers to:
   'USDJPY" = 112.24...means 112.24JPY buy 1 USD. In this case, JPYen is the domestic unit, USD the foreign.  
   "AUDUSD" = 0.7725 ...means 0.7725USD buy 1 AUD.  In this case, USD is the domestic unit, AUD the foreign.  
 
-  
- 
-The __init__ method includes all the usual inputs (spot, strike, implied vol blabla), as well as stuff like d1, d2 to price option and greeks.  
-delta() method has, as per above, various conventions. For AUDUSD and EURUSD it's excluding premium. For USDXYZ you exclude the premium as it's often quoted in USD.
+The __init__ method includes option specific attributes like strike and tenor.
+
+Market inputs like spot, volatility and interest rates are taken as arguments for pricing methods. 
+
+delta() method has, as per above, various conventions. For AUDUSD and EURUSD it's excluding premium if the premium is paid in USD.
+For USDXYZ you exclude the premium as it's often quoted in USD (as well as AUDUSD and EURUSD if premium is in %Foreign).
+
+gamma() method is numerical (bump up and down delta)
 
 strike_From_delta() method , ask if cares. There is a slight circularity here btw.
 
 CND() method is a (very close) approximation of NORMSDIST.
 
-Almost all results are pretty close to what actual pricers yield (except for gamma). 2 examples below from the Python Notebook, as of 24Nov2017.
+Almost all results are pretty close to what actual pricers yield. 2 examples below from the Python Notebook, as of 24Nov2017.
 
 Example 1: USD100mio,  put USD/JPY call expiring 26Jun2018 (7months), struck at 101.45. Foreign (USD) rate is 1.458%, domestic (JPY)
 rate is -0.603, implied vol is 10.51%.  Premium is in % of Foreign (USD) in this case, while delta is SIF (Spot, Including Premium, in Foreign Units).
