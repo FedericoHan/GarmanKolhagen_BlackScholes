@@ -24,20 +24,34 @@ CND() method is a (very close) approximation of NORMSDIST.
 
 Almost all results are pretty close to what actual pricers yield. 2 examples below from the Python Notebook, as of 24Nov2017.
 
-Example 1: USD100mio,  put USD/JPY call expiring 26Jun2018 (7months), struck at 101.45. Foreign (USD) rate is 1.458%, domestic (JPY)
-rate is -0.603, implied vol is 10.51%.  Premium is in % of Foreign (USD) in this case, while delta is SIF (Spot, Including Premium, in Foreign Units).
+Example 1: USD50mio , put USD/CNH call expiring 12April2018 (2weeks), struck at 6.27. 
+Foreign (USD) rate is 1.7068%, 
+domestic (CNH) rate is 3.3692%
 
-opt1 = FXOption('Put', 111.45, 101.45, 0.1051,  0.01458, -0.00603, date(2018,6, 26), 100000000,"")
-print(opt1.price())     ----> USD 616,169
-print(opt1.delta('SIF')) ----> USD 14.989mio 
-print(opt1.gamma())   ----> USD 2,5mio (this is a bit off)
-print(opt1.vega())  -----> USD 173,000
+Premium is in % of Foreign (USD) in this case, while delta is SIF (Spot, Including Premium, in Foreign Units).
+
+opt_put = FXOption(CallPutFlag = 'Put', K = 6.27, dateEnd = date(2018,4,12), 
+                notional = 50000000, 
+                premConvention = "")
+
+S = 6.2859
+sigma  = 0.0596
+rFor = 0.017068
+rDom = 0.033692
+
+print('value: '+'{:,}'.format(opt_put.price(S , sigma , rFor, rDom)))  
+print('delta: '+'{:,}'.format(opt_put.delta( S  , sigma , rFor, rDom, convention = 'SIF' )))
+print('gamma: '+'{:,}'.format(opt_put.gamma(S, sigma , rFor, rDom, convention = 'SEF' )))
 
 
-Example 2: EUR 52mio,  call EUR/USD put, expiring 24Aug2018 (7months), struck at 1.3200. Foreign (EUR) rate is -0.82%, domestic (USD in this case) rate is 1.50$, implied vol is 8.36%.  Premium in this case is in domestic (USD) units, delta is SEF (Spot, Excluding Premium in Foreign Units).
+Example 2: EUR 100mio call 1.2330 EUR/USD put exiring 5 Aprl 2018 (1week).
+Here Foreign rate is EUR, domestic is USD, as it's USD 1.2310 for 1 EUR.  
 
-opt2 = FXOption('Call', 1.1850, 1.3200, 0.0836,  -0.00824, 0.01504,date(2018, 8, 24), 52000000, 'DomesticPips')
-print(opt2.price())    ----> USD 236,461
-print(opt2.delta('SEF')) ---> EUR 5.8mio
-print(opt2.gamma())  ---> EUR .113mio, way wrong
-print(opt2.vega())  --->EUR 86k
+S = 1.2310
+sigma = 0.0625
+rFor = -0.00755
+rDom = 0.0172138
+
+print('{:,}'.format(eur_SEF.price(S, sigma , rFor , rDom )))
+print('{:,}'.format(eur_SEF.delta( S, sigma , rFor , rDom, convention = 'SEF' )))
+print('{:,}'.format(eur_SEF.gamma( S, sigma , rFor , rDom, convention = 'SEF' )))
